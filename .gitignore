@@ -1,7 +1,6 @@
 !.gitkeep
 !.gitignore
 /vendor
-/data
 *.orig
 .idea/
 build/*

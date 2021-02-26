@@ -4,12 +4,14 @@
   "license": ["GNU General Public License v3.0"],
   "minimum-stability": "dev",
   "prefer-stable": true,
+  "version": "0.0.99",
   "extra": {
   },
   "require": {
     "php": "~7.4",
     "symfony/console": "^5.2",
-    "symfony/finder": "^5.2"
+    "symfony/finder": "^5.2",
+    "symfony/http-client": "^5.2"
   },
   "autoload": {
     "psr-4": {"Ptolemy\\": "src/"}
@@ -18,5 +20,8 @@
   },
   "require-dev": {
     "symfony/var-dumper": "^5.2"
-  }
+  },
+  "bin": [
+    "bin/ptolemy-php"
+  ]
 }
