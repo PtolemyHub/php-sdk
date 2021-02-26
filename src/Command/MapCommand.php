@@ -49,7 +49,7 @@ class MapCommand extends Command
         }
 
         $content = file_get_contents($filepath);
-        $regexCall = "/((?:static )?(public|protected|private) +(?:static )?function +[a-zA-Z0-9]+\([^)]*\)[^{]*\{)/s";
+        $regexCall = "/((?:static )?(public|protected|private) +(?:static )?function +[a-zA-Z0-9_]+\([^)]*\)[^{]*\{)/s";
         $replaceCall = "$1\n        \Ptolemy\SenderService::track();\n";
 
         $newFileContent = preg_replace($regexCall, $replaceCall, $content);

@@ -1,10 +1,9 @@
 {
   "name": "ptolemyhub/php-sdk",
   "description": "PHP SDK to use with Ptolemy",
-  "license": ["GNU General Public License v3.0"],
-  "minimum-stability": "dev",
-  "prefer-stable": true,
+  "license": ["GPL-3.0-only"],
   "version": "0.0.99",
+  "type": "library",
   "extra": {
   },
   "require": {
@@ -14,7 +13,9 @@
     "symfony/http-client": "^5.2"
   },
   "autoload": {
-    "psr-4": {"Ptolemy\\": "src/"}
+    "psr-4": {
+      "Ptolemy\\": "src/"
+    }
   },
   "autoload-dev": {
   },
