@@ -13,7 +13,7 @@
             "in": "vendor"
         }
     ],
-    "main": "bin/ptolemy-php",
+    "main": "ptolemy-php",
     "output": "build/ptolemy-php.phar",
     "check-requirements": false,
     "dump-autoload": false,
