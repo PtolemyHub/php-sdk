@@ -24,4 +24,4 @@ ptolemy-bash:
 	@docker run --rm -it $(SRC_VOLUME_OPTION) -v $(EXPERIMENT_DIRECTORY_VOLUME_OPTION):/var/app $(USER_OPTION) $(PHP_IMAGE_NAME) bash
 
 ptolemy-map:
-	@docker run --rm -it $(SRC_VOLUME_OPTION) -v $(EXPERIMENT_DIRECTORY_VOLUME_OPTION):/var/app $(USER_OPTION) $(PHP_IMAGE_NAME) ./bin/ptolemy-php map /var/app
+	@docker run --rm -it $(SRC_VOLUME_OPTION) -v $(EXPERIMENT_DIRECTORY_VOLUME_OPTION):/var/app $(USER_OPTION) $(PHP_IMAGE_NAME) ./ptolemy-php map /var/app

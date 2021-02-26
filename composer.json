@@ -23,6 +23,6 @@
     "symfony/var-dumper": "^5.2"
   },
   "bin": [
-    "bin/ptolemy-php"
+    "ptolemy-php"
   ]
 }
