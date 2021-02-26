@@ -1,12 +1,8 @@
-PHP_DOCKER_TAG=0.0.1
-PHP_IMAGE_NAME=ptolemy-docker:$(PHP_DOCKER_TAG)
+PHP_IMAGE_NAME=chrishautenne/php:7.4.15
 
 USER_OPTION=-u $(shell id -u):$(shell id -g)
 SRC_VOLUME_OPTION=-v $(shell pwd):/usr/src
 EXPERIMENT_DIRECTORY_VOLUME_OPTION=$(shell pwd)/../kulla-dev/symfony/kulla/src
-
-docker-build:
-	@docker build -t $(PHP_IMAGE_NAME) -f docker/php/Dockerfile .
 
 php-bash:
 	@docker run --rm -it $(SRC_VOLUME_OPTION) -v ~/.composer:/.composer $(USER_OPTION) $(PHP_IMAGE_NAME) bash
