@@ -8,9 +8,15 @@
   },
   "require": {
     "php": "~7.4",
+    "psr/http-message": "^1.0",
+    "php-http/httplug": "^2.0",
+    "php-http/async-client-implementation": "^1.0",
+    "php-http/message-factory": "^1.0",
+    "php-http/discovery": "^1.0",
     "symfony/console": "^5.2",
     "symfony/finder": "^5.2",
-    "symfony/http-client": "^5.2"
+    "ext-json": "*",
+    "guzzlehttp/promises": "^1.4"
   },
   "autoload": {
     "psr-4": {
@@ -20,7 +26,10 @@
   "autoload-dev": {
   },
   "require-dev": {
-    "symfony/var-dumper": "^5.2"
+    "symfony/var-dumper": "^5.2",
+    "php-http/mock-client": "^1.0",
+    "php-http/message": "^1.0",
+    "guzzlehttp/psr7": "^1.0"
   },
   "bin": [
     "ptolemy-php"

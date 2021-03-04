@@ -5,6 +5,7 @@ namespace Ptolemy\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 
@@ -16,6 +17,7 @@ class MapCommand extends Command
     {
         $this
             ->addArgument('entrypoint', InputArgument::REQUIRED, 'The entrypoint directory or file to map')
+            ->addOption('unmap', null, InputOption::VALUE_NONE, 'Remove all calls to Ptolemy instead of adding them')
         ;
     }
 
@@ -29,20 +31,55 @@ class MapCommand extends Command
 
         $output->writeln(sprintf('Mapping the entrypoint %s', $entrypoint));
 
-        if (is_dir($entrypoint)) {
-            $finder = new Finder();
-
-            foreach ($finder->in($entrypoint)->name('*.php')->files() as $file) {
-                $this->transformFile($file->getRealPath());
-            }
+        if ($input->getOption('unmap') !== true) {
+            $this->map($entrypoint);
         } else {
-            $this->transformFile($entrypoint);
+            $this->unmap($entrypoint);
         }
 
         return Command::SUCCESS;
     }
 
-    private function transformFile(string $filepath)
+    private function map(string $entrypoint): void
+    {
+        if (is_dir($entrypoint)) {
+            $finder = new Finder();
+
+            foreach ($finder->in($entrypoint)->name('*.php')->files() as $file) {
+                $this->addCallToLibrary($file->getRealPath());
+            }
+        } else {
+            $this->addCallToLibrary($entrypoint);
+        }
+    }
+
+    private function unmap(string $entrypoint): void
+    {
+        if (is_dir($entrypoint)) {
+            $finder = new Finder();
+
+            foreach ($finder->in($entrypoint)->name('*.php')->files() as $file) {
+                $this->removeCallToLibrary($file->getRealPath());
+            }
+        } else {
+            $this->removeCallToLibrary($entrypoint);
+        }
+    }
+
+    private function removeCallToLibrary(string $filepath)
+    {
+        if (!is_file($filepath)) {
+            return;
+        }
+
+        $content = file_get_contents($filepath);
+        $regexCall = "/(\n[^\nP]*Ptolemy[^(]*\(.*\);\n)/";
+
+        $newFileContent = preg_replace($regexCall, '', $content);
+        file_put_contents($filepath, $newFileContent);
+    }
+
+    private function addCallToLibrary(string $filepath)
     {
         if (!is_file($filepath)) {
             return;
