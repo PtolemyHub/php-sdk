@@ -2,102 +2,51 @@
 
 namespace Ptolemy;
 
-use GuzzleHttp\Promise\Utils;
-use Http\Client\HttpAsyncClient;
-use Http\Discovery\HttpAsyncClientDiscovery;
-use Http\Discovery\Psr17FactoryDiscovery;
-use Http\Promise\Promise;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamFactoryInterface;
+use Ptolemy\DTO\Notebook;
 
 class PtolemySdk
 {
     private static PtolemySdk $sdk;
 
-    private $dsn;
-    private string $requestId;
     private bool $isDebugMode;
     private int $concurrentRequests;
+    private int $batchSize;
 
-    private HttpAsyncClient $httpAsyncClient;
-    private RequestFactoryInterface $requestFactory;
-    private StreamFactoryInterface $streamFactory;
-
-    /** @var Promise[] */
-    private array $promises = [];
+    private Notebook $notebook;
+    private Packager $packager;
+    private Shipper $shipper;
 
     private function __construct(array $options = [])
     {
-        $this->dsn = $options['dsn'] ?? null;
         $this->isDebugMode = $options['debug'] ?? false;
         $this->concurrentRequests = (int) $options['concurrentRequests'] ?? 1;
-        $this->requestId = $this->generateRequestId();
+        $this->batchSize = (int) ($options['batchSize'] ?? 50);
 
-        $this->httpAsyncClient = HttpAsyncClientDiscovery::find();
-        $this->requestFactory = Psr17FactoryDiscovery::findRequestFactory();
-        $this->streamFactory = Psr17FactoryDiscovery::findStreamFactory();
+        $this->notebook = new Notebook();
+        $this->packager = new Packager();
+        $this->shipper = new Shipper($options['dsn']);
 
         register_shutdown_function([$this, 'onShutdown']);
     }
 
+    public function getNotebook(): Notebook
+    {
+        return $this->notebook;
+    }
+
     public function onShutdown()
     {
-        self::logDebug(sprintf(
-            'onShutdown start with %s promises and chunk size of %s promises',
-            count($this->promises),
-            $this->concurrentRequests
-        ));
-        $start = hrtime(true);
-
-        $chunks = array_chunk($this->promises, $this->concurrentRequests);
-        foreach ($chunks as $i => $chunkPromises) {
-            Utils::settle($chunkPromises)->wait();
-            self::logDebug(sprintf(
-                'promises chunk %s $done with %s promises, duration : %s milliseconds',
-                $i,
-                count($chunkPromises),
-                (hrtime(true) - $start) / 1e+6
-            ));
-        }
-        $duration = (hrtime(true) - $start) / 1e+6;
-        self::logDebug(sprintf('onShutdown end, with an execution time of %s milliseconds', $duration));
+        $packages = $this->packager->package($this->notebook->getRelationships(), $this->batchSize);
+        $this->shipper->shipPackages($packages, $this->concurrentRequests);
     }
 
-    private function getFulfilledCallback(): ?callable
+    public static function log(string $message): void
     {
-        if (!$this->isDebugMode) {
-            return null;
+        $sdk = self::getSdk();
+        if (!$sdk->isDebugMode) {
+            return;
         }
 
-        return function (ResponseInterface $response) {
-            self::logDebug($response->getStatusCode().' '.$response->getBody()->getContents());
-            return $response;
-        };
-    }
-
-    private function getRejectedCallback(): callable
-    {
-        return function(\Exception $exception) {
-            self::logDebug($exception->getTraceAsString());
-        };
-    }
-
-    private function generateRequestId(): string
-    {
-        $chars = array_flip(array_merge(range('a', 'z'), range(0, 9)));
-
-        return implode('-', [
-            implode('', array_rand($chars, 8)),
-            implode('', array_rand($chars, 4)),
-            implode('', array_rand($chars, 4)),
-            implode('', array_rand($chars, 4)),
-            implode('', array_rand($chars, 12)),
-        ]);
-    }
-
-    public static function logDebug(string $message): void
-    {
         file_put_contents('/usr/src/log.txt', sprintf("[%s] %s\n", date('H:i:s'), $message), FILE_APPEND);
     }
 
@@ -113,35 +62,5 @@ class PtolemySdk
         }
 
         return self::$sdk;
-    }
-
-    public function getDsn(): ?string
-    {
-        return $this->dsn;
-    }
-
-    public function getRequestId(): string
-    {
-        return $this->requestId;
-    }
-
-    public function addPromise(Promise $promise): void
-    {
-        $this->promises[] = $promise->then($this->getFulfilledCallback(), $this->getRejectedCallback());
-    }
-
-    public function getHttpAsyncClient(): HttpAsyncClient
-    {
-        return $this->httpAsyncClient;
-    }
-
-    public function getRequestFactory(): RequestFactoryInterface
-    {
-        return $this->requestFactory;
-    }
-
-    public function getStreamFactory(): StreamFactoryInterface
-    {
-        return $this->streamFactory;
     }
 }

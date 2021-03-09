@@ -2,7 +2,7 @@
 
 namespace Ptolemy\DTO;
 
-class NodeDTO
+class Node
 {
     private ?string $class;
     private ?string $type;
@@ -15,18 +15,12 @@ class NodeDTO
         $this->function = $function;
     }
 
-    public function getClass(): ?string
+    public function toArray(): array
     {
-        return $this->class;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function getFunction(): ?string
-    {
-        return $this->function;
+        return [
+            'class' => $this->class,
+            'type' => $this->type,
+            'function' => $this->function,
+        ];
     }
 }
