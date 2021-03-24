@@ -4,7 +4,8 @@ namespace Ptolemy\DTO;
 
 class Package
 {
-    private array $serializableRelationships = [];
+    /** @var array */
+    private $serializableRelationships = [];
 
     public function addSerializableRelationship(array $serializableRelationship): void
     {

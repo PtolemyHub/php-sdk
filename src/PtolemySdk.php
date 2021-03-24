@@ -6,15 +6,26 @@ use Ptolemy\DTO\Notebook;
 
 class PtolemySdk
 {
-    private static PtolemySdk $sdk;
+    /** @var PtolemySdk */
+    private static $sdk;
 
-    private bool $isDebugMode;
-    private int $concurrentRequests;
-    private int $batchSize;
+    /** @var bool */
+    private $isDebugMode;
 
-    private Notebook $notebook;
-    private Packager $packager;
-    private Shipper $shipper;
+    /** @var int */
+    private $concurrentRequests;
+
+    /** @var int */
+    private $batchSize;
+
+    /** @var Notebook */
+    private $notebook;
+
+    /** @var Packager */
+    private $packager;
+
+    /** @var Shipper */
+    private $shipper;
 
     private function __construct(array $options = [])
     {

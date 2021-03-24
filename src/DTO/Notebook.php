@@ -4,7 +4,8 @@ namespace Ptolemy\DTO;
 
 class Notebook
 {
-    private array $relationships = [];
+    /** @var array */
+    private $relationships = [];
 
     public function addRelationship(Relationship $relationship): void
     {

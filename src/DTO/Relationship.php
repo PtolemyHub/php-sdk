@@ -4,8 +4,11 @@ namespace Ptolemy\DTO;
 
 class Relationship
 {
-    private Node $caller;
-    private Node $callee;
+    /** @var Node */
+    private $callee;
+
+    /** @var Node */
+    private $caller;
 
     public function __construct(Node $caller, Node $callee)
     {

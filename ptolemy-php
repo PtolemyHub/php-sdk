@@ -18,6 +18,6 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 use Ptolemy\Command\MapCommand;
 use Symfony\Component\Console\Application;
 
-$application = new Application('Ptolemy', '0.1-dev');
+$application = new Application('Ptolemy', '0.1.0');
 $application->add(new MapCommand());
 $application->run();

@@ -4,9 +4,14 @@ namespace Ptolemy\DTO;
 
 class Node
 {
-    private ?string $class;
-    private ?string $type;
-    private ?string $function;
+    /** @var string|null */
+    private $class;
+
+    /** @var string|null */
+    private $type;
+
+    /** @var string */
+    private $function;
 
     public function __construct(string $class = null, string $type = null, string $function = null)
     {

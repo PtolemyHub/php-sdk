@@ -13,12 +13,20 @@ use Ptolemy\DTO\Package;
 
 class Shipper
 {
-    private string $requestId;
-    private string $dsn;
+    /** @var string */
+    private $requestId;
 
-    private HttpAsyncClient $httpAsyncClient;
-    private RequestFactoryInterface $requestFactory;
-    private StreamFactoryInterface $streamFactory;
+    /** @var string */
+    private $dsn;
+
+    /** @var HttpAsyncClient */
+    private $httpAsyncClient;
+
+    /** @var RequestFactoryInterface */
+    private $requestFactory;
+
+    /** @var StreamFactoryInterface */
+    private $streamFactory;
 
     public function __construct(string $dsn)
     {
