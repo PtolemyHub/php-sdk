@@ -13,7 +13,7 @@ class Node
     /** @var string */
     private $function;
 
-    public function __construct(string $class = null, string $type = null, string $function = null)
+    public function __construct(string $function, string $class = null, string $type = null)
     {
         $this->class = $class;
         $this->type = $type;
